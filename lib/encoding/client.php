@@ -102,7 +102,10 @@ class Encoding_Client {
    *   Value to add.
    */
   public function setFieldValue($field, $value) {
-    $this->request->addChild($field, $value);
+    // We assign chid values directly rather than using the addChild() method
+    // here because addChild() doesn't propertly handle the & character that is
+    // in some URLs.
+    $this->request->{$field} = $value;
   }
 
   /**
