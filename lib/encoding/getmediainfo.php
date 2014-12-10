@@ -21,4 +21,11 @@ class Encoding_GetMediaInfoAction extends Encoding_Client {
   public function setMediaID($media_id) {
     $this->setFieldValue('mediaid', $media_id);
   }
+
+  /**
+   * Implements parent::sendRequest().
+   */
+  public function sendRequest() {
+    return parent::sendRequest(Encoding_Client::POST);
+  }
 }
