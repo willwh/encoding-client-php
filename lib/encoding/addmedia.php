@@ -67,7 +67,7 @@ class Encoding_AddMediaAction extends Encoding_Client {
       $source_info = pathinfo($this->source);
       $prefix = isset($format['file-prefix']) ? $format['file-prefix'] : '';
       unset($format['file-prefix']);
-      $format['destination'] = $this->destination . '/' . $source_info['filename'] . '/' . $prefix . $source_info['filename'] . '-' . $format['file-suffix'];
+      $format['destination'] = $this->destination . '/' . $source_info['filename'] . '/' . $prefix . $source_info['filename'] .  $format['file-suffix'];
       unset($format['file-suffix']);
 
       foreach ($format as $key => $value) {
