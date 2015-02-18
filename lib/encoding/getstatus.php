@@ -25,7 +25,7 @@ class Encoding_GetStatusAction extends Encoding_Client {
   /**
    * Implements parent::sendRequest().
    */
-  public function sendRequest() {
+  public function sendRequest($method) {
     return parent::sendRequest(Encoding_Client::POST);
   }
 }
