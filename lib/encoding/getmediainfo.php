@@ -25,7 +25,7 @@ class Encoding_GetMediaInfoAction extends Encoding_Client {
   /**
    * Implements parent::sendRequest().
    */
-  public function sendRequest() {
-    return parent::sendRequest(Encoding_Client::POST);
+  public function sendRequest($method = Encoding_Client::POST) {
+    return parent::sendRequest($method);
   }
 }

@@ -79,10 +79,10 @@ class Encoding_AddMediaAction extends Encoding_Client {
   /**
    * Override the sendRequest method so we can add some additional processing.
    */
-  public function sendRequest() {
+  public function sendRequest($method = Encoding_Client::POST) {
     if (isset($this->destination) && isset($this->formats)) {
       $this->prepareRequest();
-      return parent::sendRequest(Encoding_Client::POST);
+      return parent::sendRequest($method);
     }
     else {
       return FALSE;
