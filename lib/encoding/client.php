@@ -3,9 +3,15 @@
  * @file
  */
 
+require 'vendor/autoload.php';
+
 /**
  * Class Encoding_Client.
  */
+
+use GuzzleHttp\Client;
+
+
 class Encoding_Client {
 
   // API User ID and Key, can be overridden in constructor.
@@ -131,44 +137,39 @@ class Encoding_Client {
     }
 
     if ($this->request) {
-      $ch = curl_init();
-      curl_setopt($ch, CURLOPT_URL, $this->api_url);
-      curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
-      curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
-      curl_setopt($ch, CURLOPT_FOLLOWLOCATION, FALSE);
-      curl_setopt($ch, CURLOPT_MAXREDIRS, 1);
-      curl_setopt($ch, CURLOPT_HEADER, 0);
-      curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-      curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
-      curl_setopt($ch, CURLOPT_TIMEOUT, 45);
-      curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-        'Accept: application/xml',
-        Encoding_Client::_userAgent(),
-        'Accept-Language: ' . $this->_acceptLanguage
-      ));
+      // Let's get rid of cURL and use guzzlehttp/guzzle
 
-      if ($method == Encoding_Client::POST) {
-        $xml = $this->request->asXML();
-        curl_setopt($ch, CURLOPT_POST, TRUE);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, "xml=" . urlencode($xml));
+      $client = new GuzzleHttp\Client([
+        'allow_redirects' => ['max' => 1],
+        'verify' => ['verify' => false],
+        'connect_timeout' => '10',
+        'timeout' => '45',
+        'headers' => [
+          'Accept' => 'application/xml',
+          //'Accept-Language' => $this->_acceptLanguage
+        ]
+      ]);
+
+      try {
+
+        if ($method == Encoding_Client::POST) {
+          $xml = $this->request->asXML();
+
+          $response = $client->request('POST', $this->api_url, [
+            'body' => urlencode(($xml))
+          ]);
+        }
+        elseif ($method == Encoding_Client::GET) {
+          $response = $client->request($method, $this->api_url);
+        }
+        var_dump($response->getBody()->getContents());
+        return new Encoding_Response($response->getStatusCode(), $response->getBody());
       }
-      elseif ($method == Encoding_Client::GET) {
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
+      catch (GuzzleHttp\Exception\ClientException $e) {
+        $response = $e->getResponse();
+        $responseBodyAsString = $response->getBody()->getContents();
+        print_r('throw a fucking error: ' . $responseBodyAsString);
       }
-
-      $response = curl_exec($ch);
-
-      if ($response === FALSE) {
-        $error_number = curl_errno($ch);
-        $message = curl_error($ch);
-        curl_close($ch);
-        $this->_raiseCurlError($error_number, $message);
-      }
-
-      $status_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-      curl_close($ch);
-
-      return new Encoding_Response($status_code, $response);
     }
     else {
       return FALSE;

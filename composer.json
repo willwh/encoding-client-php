@@ -1,0 +1,14 @@
+{
+    "name": "willwh/encoding-client-php",
+    "description": "PHP Client for the Encoding.com API",
+    "require": {
+        "guzzlehttp/guzzle": "^6.1"
+    },
+    "license": "Apache-2.0",
+    "authors": [
+        {
+            "name": "William Hetherington",
+            "email": "will@willwh.com"
+        }
+    ]
+}
